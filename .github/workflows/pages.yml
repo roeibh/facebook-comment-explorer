@@ -27,10 +27,16 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
+      - run: test -s docs/index.html && test -s docs/bookmarklet.txt
+
+      # og.png and screenshot.png are rendered from the page itself so they can
+      # never drift from the design - but they are cosmetic, and installing
+      # Chromium is the most failure-prone step here. Never let it cost us the site.
       - run: npx playwright install --with-deps chromium
-      # og.png and screenshot.png are rendered from the page itself, so they can
-      # never drift from the design and no binaries live in git.
+        continue-on-error: true
       - run: npm run shots
+        continue-on-error: true
+
       # enablement:true switches Pages on for the repo, so there is no manual setup.
       - uses: actions/configure-pages@v5
         with:
