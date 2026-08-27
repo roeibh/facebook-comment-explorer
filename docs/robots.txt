@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://roeibh.github.io/facebook-comment-explorer/sitemap.xml

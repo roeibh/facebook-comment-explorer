@@ -1,0 +1,33 @@
+{
+  "name": "facebook-comment-explorer",
+  "version": "1.0.0",
+  "description": "A bookmarklet that expands every comment and reply on a Facebook post, then gives you instant search, thread filtering and CSV/JSON export.",
+  "keywords": [
+    "facebook",
+    "comments",
+    "bookmarklet",
+    "expand-comments",
+    "load-all-comments",
+    "search",
+    "export",
+    "csv",
+    "userscript",
+    "browser"
+  ],
+  "license": "MIT",
+  "author": "Roei (https://github.com/roeibh)",
+  "homepage": "https://roeibh.github.io/facebook-comment-explorer/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roeibh/facebook-comment-explorer.git"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "shots": "node scripts/shots.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.45.0",
+    "terser": "^5.31.0"
+  }
+}
