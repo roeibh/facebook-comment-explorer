@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Expand All Facebook Comments &amp; Search Them — Bookmarklet</title>
+<meta name="description" content="Free bookmarklet that loads every comment and reply on a Facebook post, then lets you search them, filter by thread and export to CSV or JSON. No extension needed.">
+<link rel="canonical" href="https://roeibh.github.io/facebook-comment-explorer/">
+<meta name="theme-color" content="#1877f2">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://roeibh.github.io/facebook-comment-explorer/">
+<meta property="og:title" content="Expand and Search Every Comment on a Facebook Post">
+<meta property="og:description" content="One click loads every comment and reply, then search them instantly and export to CSV or JSON. Free bookmarklet, no extension required.">
+<meta property="og:image" content="https://roeibh.github.io/facebook-comment-explorer/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Expand and Search Every Comment on a Facebook Post">
+<meta name="twitter:description" content="One click loads every comment and reply, then search them instantly and export to CSV or JSON.">
+<meta name="twitter:image" content="https://roeibh.github.io/facebook-comment-explorer/og.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128172;</text></svg>">
+<style>
+:root{
+  --bg:#ffffff; --fg:#0f1419; --muted:#5b6570; --line:#e3e6ea; --soft:#f6f8fa;
+  --accent:#1877f2; --accent-fg:#fff; --code:#f2f4f7; --mark:#ffe27a;
+  --radius:12px; 
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --line:#262c35; --soft:#161b22;
+         --accent:#4c9aff; --accent-fg:#06121f; --code:#161b22; --mark:#8a6d00; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+h1,h2,h3{line-height:1.25;letter-spacing:-.02em}
+h1{font-size:clamp(1.9rem,5vw,3rem);margin:0 0 .5rem}
+h2{font-size:clamp(1.35rem,3.2vw,1.9rem);margin:3.5rem 0 1rem}
+h3{font-size:1.05rem;margin:2rem 0 .4rem}
+p{margin:0 0 1rem}
+hr{border:0;border-top:1px solid var(--line);margin:3rem 0}
+code{background:var(--code);padding:.15em .4em;border-radius:5px;font-size:.9em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+header{padding:3.5rem 0 1rem;text-align:center}
+.lede{font-size:1.15rem;color:var(--muted);max-width:44rem;margin:0 auto 2rem}
+.install{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.75rem;margin:2rem 0;text-align:center}
+.dragrow{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.25rem 0 .75rem}
+.bm{display:inline-block;background:var(--accent);color:var(--accent-fg);text-decoration:none;
+  font-weight:700;font-size:1.05rem;padding:.85rem 1.6rem;border-radius:10px;cursor:grab;
+  box-shadow:0 2px 10px rgba(24,119,242,.28);white-space:nowrap;user-select:none}
+.bm:active{cursor:grabbing}
+.arrow{color:var(--muted);font-size:.92rem}
+.mobileonly{display:none}
+@media (max-width:640px){ .arrow{display:none} .mobileonly{display:block} }
+.hint{color:var(--muted);font-size:.92rem;margin:.5rem 0 0}
+.btnrow{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1.25rem}
+button.copy{font:inherit;font-size:.9rem;padding:.5rem 1rem;border-radius:8px;
+  border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+button.copy:hover{background:var(--soft)}
+.star{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;padding:.5rem 1rem;
+  border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);
+  text-decoration:none;font-weight:600}
+.star:hover{background:var(--soft)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:1.5rem 0}
+.steps li{counter-increment:s;position:relative;padding-left:2.6rem;margin-bottom:1.1rem}
+.steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:1.8rem;height:1.8rem;
+  border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;
+  font-size:.85rem;font-weight:700}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:1.5rem 0}
+.card{border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;background:var(--soft)}
+.card h3{margin:0 0 .3rem;font-size:1rem}
+.card p{margin:0;color:var(--muted);font-size:.94rem}
+figure{margin:2rem 0;text-align:center}
+figcaption{color:var(--muted);font-size:.88rem;margin-top:.7rem}
+/* mockup of the panel, built in HTML so highlights land on the right words */
+.mock{display:flex;gap:14px;text-align:left;border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;background:var(--bg);overflow:hidden}
+.mk-post{flex:1 1 55%;min-width:0;background:var(--soft);border:1px solid var(--line);
+  border-radius:10px;padding:14px}
+.mk-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mk-av{display:block;width:28px;height:28px;border-radius:50%;background:var(--line);flex:none}
+.mk-av.sm{width:22px;height:22px}.mk-av.xs{width:18px;height:18px}
+.mk-l{display:block;height:9px;border-radius:5px;background:var(--fg);opacity:.6;margin-bottom:5px}
+.mk-l.mk-dim{background:var(--muted);opacity:.45;height:7px}
+.mk-img{height:78px;border-radius:8px;background:var(--line);opacity:.6}
+.mk-c{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.mk-c.mk-in{padding-left:26px}
+.mk-bub{display:block;height:24px;border-radius:11px;background:var(--line);opacity:.7}
+.mk-panel{flex:1 1 45%;min-width:0;border:1px solid var(--line);border-radius:10px;
+  display:flex;flex-direction:column;font-size:12px}
+.mk-ph{display:flex;align-items:center;gap:7px;padding:9px 11px;border-bottom:1px solid var(--line)}
+.mk-ph b{font-size:12.5px}
+.mk-mut{color:var(--muted)}
+.mk-icons{margin-left:auto;color:var(--muted);letter-spacing:4px}
+.mk-pb{padding:8px 11px;border-bottom:1px solid var(--line)}
+.mk-input{display:block;border:1px solid var(--accent);background:var(--soft);border-radius:8px;
+  padding:6px 9px}
+.mk-caret{display:inline-block;width:1px;height:12px;background:var(--accent);
+  vertical-align:-2px;margin-left:2px}
+.mk-pills{display:flex;gap:6px}
+.mk-pill{border:1px solid var(--line);background:var(--soft);border-radius:6px;padding:3px 9px;
+  font-size:11px;color:var(--muted)}
+.mk-stat{padding:6px 11px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px}
+.mk-rows{flex:1}
+.mk-row{padding:7px 11px;border-bottom:1px solid var(--line)}
+.mk-row.rep{border-left:3px solid var(--line);padding-left:22px}
+.mk-meta{display:flex;gap:7px;align-items:baseline;font-size:11px;color:var(--muted);margin-bottom:2px}
+.mk-meta b{color:var(--fg);font-size:11.5px}
+.mk-re{font-style:italic}
+.mk-th{color:var(--accent);border-bottom:1px dotted currentColor}
+.mk-tx{font-size:12px;line-height:1.35}
+.mk-tx mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+.mk-pf{display:flex;gap:10px;padding:8px 11px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:11px}
+@media (max-width:700px){ .mk-post{display:none} }
+details{border-top:1px solid var(--line);padding:1rem 0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";color:var(--accent);font-weight:700;margin-right:.6rem}
+details[open] summary::before{content:"\2013"}
+details p{margin:.8rem 0 0;color:var(--muted)}
+kbd{background:var(--code);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;
+  padding:.1em .45em;font-size:.85em;font-family:inherit}
+table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.94rem}
+th,td{text-align:left;padding:.6rem .5rem;border-bottom:1px solid var(--line)}
+th{font-weight:600}
+footer{margin:4rem 0 3rem;padding-top:2rem;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.9rem;text-align:center}
+.toast{position:fixed;left:50%;bottom:2rem;transform:translate(-50%,1rem);opacity:0;
+  background:var(--fg);color:var(--bg);padding:.7rem 1.2rem;border-radius:8px;font-size:.9rem;
+  pointer-events:none;transition:.2s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <h1>Expand and search every comment on a Facebook post</h1>
+  <p class="lede">Facebook shows you ten comments at a time and hides replies behind
+  &ldquo;View 4 replies&rdquo;. This bookmarklet loads all of them, then gives you a search box
+  that actually works &mdash; plus thread filtering and CSV&nbsp;/&nbsp;JSON export.</p>
+
+  <div class="install">
+    <strong>Drag this button to your bookmarks bar:</strong>
+    <div class="dragrow">
+      <a class="bm" id="bm" href="__BOOKMARKLET__">&#128172; FB Comments</a>
+      <span class="arrow">&larr; drag me up there</span>
+    </div>
+    <p class="hint">Bookmarks bar hidden? Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>
+    (<kbd>&#8984;</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> on Mac) first.</p>
+    <p class="hint mobileonly">On a phone? Bookmarklets need a desktop browser &mdash;
+    open this page on your computer.</p>
+    <div class="btnrow">
+      <button class="copy" id="copy">Copy the code instead</button>
+      <a class="star" href="https://github.com/roeibh/facebook-comment-explorer">
+        &#11088; Star on GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<h2 id="how-to-use">How to use it</h2>
+<ol class="steps">
+  <li>Drag the button above onto your bookmarks bar.</li>
+  <li>Open any Facebook post &mdash; a group post, a Page post, or someone&rsquo;s profile post.</li>
+  <li>Click the bookmark. It switches the sort to <em>All comments</em>, scrolls until Facebook
+      stops sending more, and opens every &ldquo;View N replies&rdquo; it finds.</li>
+  <li>Search, filter, jump to a comment on the page, or export the results.</li>
+</ol>
+<p>A post with 450 comments takes about 40 seconds. The panel shows progress against the post&rsquo;s
+own comment counter, so you can see how much is left.</p>
+
+<figure>
+__SCREENSHOT__
+  <figcaption>The panel opens beside the post: search, level and sort filters, and one row per comment.</figcaption>
+</figure>
+
+<h2 id="features">What it does</h2>
+<div class="grid">
+  <div class="card"><h3>Loads everything</h3>
+    <p>Switches to &ldquo;All comments&rdquo;, keeps the list scrolling, and clicks every reply
+    expander until nothing new arrives.</p></div>
+  <div class="card"><h3>Search that works</h3>
+    <p><code>"quoted phrase"</code>, <code>-exclude</code> and <code>@author</code>. Matches are
+    highlighted, and any language works &mdash; including right-to-left text.</p></div>
+  <div class="card"><h3>Whole threads</h3>
+    <p>Replies are nested under the right parent, up to three levels deep. Click
+    &ldquo;4 replies&rdquo; to read one conversation on its own.</p></div>
+  <div class="card"><h3>Jump to the comment</h3>
+    <p>Click any result and the real comment scrolls into view on the page and flashes,
+    so you can reply or react to it.</p></div>
+  <div class="card"><h3>Export</h3>
+    <p>Download the current filtered set as JSON or CSV, or copy it as plain text. Author,
+    time, reactions, reply parent and a permalink for each comment.</p></div>
+  <div class="card"><h3>Sort</h3>
+    <p>Page order, newest, oldest, most reactions, or longest &mdash; orderings Facebook
+    does not offer you.</p></div>
+</div>
+
+<h2 id="search-syntax">Search syntax</h2>
+<table>
+  <thead><tr><th>Type this</th><th>To find</th></tr></thead>
+  <tbody>
+    <tr><td><code>pizza friday</code></td><td>comments containing both words, in any order</td></tr>
+    <tr><td><code>"pizza friday"</code></td><td>that exact phrase</td></tr>
+    <tr><td><code>pizza -friday</code></td><td>pizza, but not where friday also appears</td></tr>
+    <tr><td><code>@sarah</code></td><td>only comments written by someone whose name contains &ldquo;sarah&rdquo;</td></tr>
+    <tr><td><code>@sarah pizza</code></td><td>comments by Sarah that mention pizza</td></tr>
+  </tbody>
+</table>
+<p>Inside the panel, <kbd>/</kbd> jumps to the search box and <kbd>Esc</kbd> steps back out
+of a thread or clears the search before closing the panel.</p>
+
+<h2 id="privacy">Privacy</h2>
+<p>Everything runs in your own browser, on the page you already have open and are already
+logged into. There is no server, no analytics, no account, and nothing is uploaded anywhere.
+The bookmarklet reads comments from the rendered page and builds a panel next to it &mdash;
+exports are generated locally and saved by your browser. The
+<a href="https://github.com/roeibh/facebook-comment-explorer/blob/main/src/fb-comment-explorer.js">entire
+source is on GitHub</a> and is short enough to read in one sitting.</p>
+
+<h2 id="faq">Frequently asked questions</h2>
+
+<details>
+  <summary>Why can&rsquo;t I just use Ctrl+F on a Facebook post?</summary>
+  <p>Because the comments aren&rsquo;t there yet. Your browser&rsquo;s find function only searches
+  text that has actually been rendered, and Facebook loads about ten comments at a time, keeps
+  replies collapsed, and truncates long comments behind &ldquo;See more&rdquo;. Ctrl+F searches the
+  handful you can see and misses the several hundred you can&rsquo;t. Loading everything first is
+  what makes find &mdash; and the search box in this tool &mdash; useful.</p>
+</details>
+
+<details>
+  <summary>How do I expand all comments on a Facebook post?</summary>
+  <p>Manually: set the comment sort to &ldquo;All comments&rdquo;, scroll to the bottom over and
+  over until nothing more loads, then click every &ldquo;View N replies&rdquo; and every &ldquo;See
+  more&rdquo; link. On a busy post that is several hundred clicks. This bookmarklet does exactly
+  that sequence for you and then tells you how many it got.</p>
+</details>
+
+<details>
+  <summary>Can I export Facebook comments to CSV or JSON?</summary>
+  <p>Yes. The panel has JSON, CSV and &ldquo;Copy text&rdquo; buttons, and they export whatever is
+  currently filtered &mdash; so you can search for a keyword and export only the matches. Each row
+  has the comment id, author, level (top-level or reply), who it replied to, timestamp, reaction
+  count, the text, and a permalink. The CSV is UTF-8 with a byte-order mark, so Hebrew, Arabic and
+  accented characters open correctly in Excel.</p>
+</details>
+
+<details>
+  <summary>Does it work on group posts, Page posts and profile posts?</summary>
+  <p>All three. Facebook uses two different internal comment formats &mdash; group posts use numeric
+  comment ids, while profile and Page posts use base64 ones and lay the links out differently &mdash;
+  and the script handles both.</p>
+</details>
+
+<details>
+  <summary>It stopped before loading every comment. Why?</summary>
+  <p>Facebook paces how fast it will send comments, and throttles harder if you have already pulled
+  a lot in a short window. When that happens the panel says so &mdash; &ldquo;Loaded 84 of ~470&rdquo;
+  &mdash; rather than pretending it finished. Press the &#8635; button to resume from where it stopped;
+  it picks up rather than starting over. Waiting a minute between attempts helps.</p>
+</details>
+
+<details>
+  <summary>Do I need to install an extension?</summary>
+  <p>No. A bookmarklet is just a bookmark whose address happens to be JavaScript instead of a web
+  address. It has no background process, no permissions, and no access to anything except the page
+  you run it on, at the moment you click it. Nothing runs until you click.</p>
+</details>
+
+<details>
+  <summary>Which browsers does it work in?</summary>
+  <p>Chrome, Edge, Brave, Arc, Opera and other Chromium browsers, plus Firefox and Safari on the
+  desktop. It needs a bookmarks bar, so mobile browsers are out &mdash; on iOS and Android there is
+  no practical way to run a bookmarklet on facebook.com.</p>
+</details>
+
+<details>
+  <summary>Is this against Facebook&rsquo;s rules? Can my account get banned?</summary>
+  <p>It clicks buttons and scrolls, which is what you would do by hand; it does not use any private
+  API, log in for you, or collect anything from people who are not already visible to you on that
+  post. That said, Facebook&rsquo;s terms discourage automated interaction, and rapid repeated use of
+  any automation can get a session rate-limited. Use it on posts you can already read, at a human
+  pace, and be sensible about what you do with other people&rsquo;s comments &mdash; they may be
+  personal data under GDPR or similar laws where you are.</p>
+</details>
+
+<details>
+  <summary>How is this different from a Chrome extension for Facebook comments?</summary>
+  <p>An extension asks for standing permission to read and change your data on the sites it covers,
+  updates itself silently, and keeps running in the background. This is one bookmark containing code
+  you can read, which does nothing at all until the moment you click it on a post you have open.
+  The trade-off is that a bookmarklet cannot remember anything between runs.</p>
+</details>
+
+<details>
+  <summary>Can I use it to count comments, or find who said something?</summary>
+  <p>Yes to both. The header shows the total and the filtered count, and the panel breaks it down
+  into top-level comments and replies. To find who said something, search the phrase; to see
+  everything one person wrote, search <code>@theirname</code>.</p>
+</details>
+
+<h2 id="source">Source and contributions</h2>
+<p>The tool is a single self-contained file with no dependencies. Bugs, layout changes on
+Facebook&rsquo;s side and pull requests are all welcome on
+<a href="https://github.com/roeibh/facebook-comment-explorer">GitHub</a> &mdash; and if it saved you
+an afternoon of clicking, a star helps other people find it.</p>
+
+<p style="text-align:center;margin:2rem 0">
+  <a class="star" href="https://github.com/roeibh/facebook-comment-explorer">&#11088; Star on GitHub</a>
+</p>
+
+<footer>
+  <p>MIT licensed &middot;
+  <a href="https://github.com/roeibh/facebook-comment-explorer">Source</a> &middot;
+  <a href="https://github.com/roeibh/facebook-comment-explorer/issues">Report a problem</a></p>
+  <p>Not affiliated with, endorsed by, or connected to Meta Platforms, Inc.
+  &ldquo;Facebook&rdquo; is a trademark of Meta Platforms, Inc.</p>
+</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var bm = document.getElementById('bm');
+  var toast = document.getElementById('toast');
+  var t;
+  function say(msg){
+    toast.textContent = msg;
+    toast.classList.add('on');
+    clearTimeout(t);
+    t = setTimeout(function(){ toast.classList.remove('on'); }, 2600);
+  }
+  bm.addEventListener('click', function(e){
+    e.preventDefault();
+    say('Drag it to your bookmarks bar — then click it on a Facebook post.');
+  });
+  document.getElementById('copy').addEventListener('click', function(){
+    var code = bm.getAttribute('href');
+    navigator.clipboard.writeText(code).then(function(){
+      say('Copied. New bookmark → paste as the URL.');
+    }).catch(function(){
+      window.prompt('Copy this, then paste it as a new bookmark’s URL:', code);
+    });
+  });
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Facebook Comment Explorer",
+      "applicationCategory": "BrowserApplication",
+      "operatingSystem": "Any desktop browser",
+      "description": "A bookmarklet that expands every comment and reply on a Facebook post, then provides search, thread filtering and CSV/JSON export.",
+      "url": "https://roeibh.github.io/facebook-comment-explorer/",
+      "downloadUrl": "https://github.com/roeibh/facebook-comment-explorer",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": "Roei", "url": "https://github.com/roeibh" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why can't I just use Ctrl+F on a Facebook post?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Browser find only searches text that has actually been rendered. Facebook loads roughly ten comments at a time, keeps replies collapsed behind 'View N replies', and truncates long comments behind 'See more', so Ctrl+F searches the handful you can see and misses the hundreds you cannot. Loading every comment first is what makes find useful." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I expand all comments on a Facebook post?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Set the comment sort to 'All comments', scroll to the bottom repeatedly until nothing more loads, then click every 'View N replies' and 'See more' link. On a busy post that is several hundred clicks. This bookmarklet performs that sequence automatically and reports how many comments it loaded." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I export Facebook comments to CSV or JSON?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The panel exports the currently filtered comments as JSON, CSV or plain text. Each row includes the comment id, author, whether it is a reply, who it replied to, timestamp, reaction count, text and a permalink. The CSV is UTF-8 with a byte-order mark so non-Latin characters open correctly in Excel." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it work on group posts, Page posts and profile posts?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, all three. Facebook uses two different internal comment formats - group posts use numeric comment ids while profile and Page posts use base64 ids with a different link layout - and the script handles both." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why did it stop before loading every comment?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Facebook paces how quickly it sends comments and throttles sessions that have requested many in a short window. The panel reports this honestly, for example 'Loaded 84 of ~470'. Pressing the refresh button resumes from where it stopped rather than starting over." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to install a browser extension?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. A bookmarklet is a bookmark whose address is JavaScript rather than a web address. It has no background process and no permissions, and nothing runs until you click it on a page you already have open." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which browsers does it work in?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Desktop Chrome, Edge, Brave, Arc, Opera and other Chromium browsers, plus Firefox and Safari. Mobile browsers are not supported because there is no practical way to run a bookmarklet on facebook.com on iOS or Android." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>
