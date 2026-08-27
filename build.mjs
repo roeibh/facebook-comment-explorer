@@ -29,6 +29,9 @@ if (decodeURIComponent(bookmarklet.slice('javascript:'.length)) !== min) {
 mkdirSync('dist', { recursive: true });
 writeFileSync('dist/fb-comment-explorer.min.js', min + '\n');
 writeFileSync('dist/bookmarklet.txt', bookmarklet);
+mkdirSync('docs', { recursive: true });
+// Also published, so anyone who prefers pasting a bookmark by hand can fetch it.
+writeFileSync('docs/bookmarklet.txt', bookmarklet);
 
 const page = readFileSync('src/index.template.html', 'utf8')
   .replace('__SCREENSHOT__', () => readFileSync('src/screenshot.html', 'utf8').trim())
@@ -40,7 +43,6 @@ if (page.includes('__BOOKMARKLET__') || page.includes('__SCREENSHOT__')) {
 // The encoded payload must not contain characters that would end the href attribute.
 if (/["'<>]/.test(bookmarklet)) throw new Error('bookmarklet is not attribute-safe');
 
-mkdirSync('docs', { recursive: true });
 writeFileSync('docs/index.html', page);
 
 console.log('source      %d bytes', source.length);

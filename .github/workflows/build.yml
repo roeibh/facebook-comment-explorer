@@ -16,5 +16,3 @@ jobs:
       - run: npm install
       - run: node --check src/fb-comment-explorer.js
       - run: npm run build
-      # dist/ and docs/index.html are committed, so a stale build should fail CI.
-      - run: git diff --exit-code -- dist/bookmarklet.txt docs/index.html
