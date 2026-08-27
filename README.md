@@ -43,8 +43,9 @@ Roughly 10 comments a second; a 450-comment post takes about 40 seconds.
 Bookmarks bar hidden? <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>
 (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> on macOS).
 
-Works in desktop Chrome, Edge, Brave, Arc, Opera, Firefox and Safari. Not on mobile — there is no
-practical way to run a bookmarklet on facebook.com on iOS or Android.
+Tested in desktop Chrome. Other desktop Chromium browsers should work; Firefox and Safari remain
+unverified. Mobile browsers are unsupported because running a bookmarklet on facebook.com is
+impractical on iOS and Android.
 
 ## Use
 

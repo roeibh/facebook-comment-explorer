@@ -46,3 +46,10 @@ jobs:
           path: docs
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Notify IndexNow
+        run: >
+          curl --fail --silent --show-error --get https://api.indexnow.org/indexnow
+          --data-urlencode url=https://roeibh.github.io/facebook-comment-explorer/
+          --data-urlencode key=facebook-comment-explorer-roeibh
+          --data-urlencode keyLocation=https://roeibh.github.io/facebook-comment-explorer/facebook-comment-explorer-roeibh.txt
+        continue-on-error: true

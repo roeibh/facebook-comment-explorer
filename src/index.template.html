@@ -5,19 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Expand All Facebook Comments &amp; Search Them — Bookmarklet</title>
 <meta name="description" content="Free bookmarklet that loads every comment and reply on a Facebook post, then lets you search them, filter by thread and export to CSV or JSON. No extension needed.">
+<meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://roeibh.github.io/facebook-comment-explorer/">
 <meta name="theme-color" content="#1877f2">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://roeibh.github.io/facebook-comment-explorer/">
+<meta property="og:site_name" content="Facebook Comment Explorer">
 <meta property="og:title" content="Expand and Search Every Comment on a Facebook Post">
 <meta property="og:description" content="One click loads every comment and reply, then search them instantly and export to CSV or JSON. Free bookmarklet, no extension required.">
 <meta property="og:image" content="https://roeibh.github.io/facebook-comment-explorer/og.png">
+<meta property="og:image:alt" content="Facebook Comment Explorer searching a loaded Facebook comment thread">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Expand and Search Every Comment on a Facebook Post">
 <meta name="twitter:description" content="One click loads every comment and reply, then search them instantly and export to CSV or JSON.">
 <meta name="twitter:image" content="https://roeibh.github.io/facebook-comment-explorer/og.png">
+<meta name="twitter:image:alt" content="Facebook Comment Explorer searching a loaded Facebook comment thread">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128172;</text></svg>">
 <style>
 :root{
@@ -173,8 +177,9 @@ footer{margin:4rem 0 3rem;padding-top:2rem;border-top:1px solid var(--line);
       stops sending more, and opens every &ldquo;View N replies&rdquo; it finds.</li>
   <li>Search, filter, jump to a comment on the page, or export the results.</li>
 </ol>
-<p>A post with 450 comments takes about 40 seconds. The panel shows progress against the post&rsquo;s
-own comment counter, so you can see how much is left.</p>
+<p>In one live group-post test it loaded 443 comments in 40 seconds. A profile-post test loaded 303,
+with no missing authors or timestamps. Facebook can throttle repeated runs, so speed varies. The
+panel shows progress against the post&rsquo;s own comment counter.</p>
 
 <figure>
 __SCREENSHOT__
@@ -228,6 +233,13 @@ source is on GitHub</a> and is short enough to read in one sitting.</p>
 <h2 id="faq">Frequently asked questions</h2>
 
 <details>
+  <summary>What is Facebook Comment Explorer?</summary>
+  <p>Facebook Comment Explorer is a free, open-source bookmarklet that loads the comments and
+  replies on a Facebook post into a searchable panel. It can filter whole threads, jump back to a
+  comment on the post and export the current results as CSV or JSON.</p>
+</details>
+
+<details>
   <summary>Why can&rsquo;t I just use Ctrl+F on a Facebook post?</summary>
   <p>Because the comments aren&rsquo;t there yet. Your browser&rsquo;s find function only searches
   text that has actually been rendered, and Facebook loads about ten comments at a time, keeps
@@ -277,9 +289,9 @@ source is on GitHub</a> and is short enough to read in one sitting.</p>
 
 <details>
   <summary>Which browsers does it work in?</summary>
-  <p>Chrome, Edge, Brave, Arc, Opera and other Chromium browsers, plus Firefox and Safari on the
-  desktop. It needs a bookmarks bar, so mobile browsers are out &mdash; on iOS and Android there is
-  no practical way to run a bookmarklet on facebook.com.</p>
+  <p>It has been tested in desktop Chrome. Other desktop Chromium browsers should work; Firefox and
+  Safari remain unverified. Mobile browsers are unsupported because running a bookmarklet on
+  facebook.com is impractical on iOS and Android.</p>
 </details>
 
 <details>
@@ -308,8 +320,9 @@ source is on GitHub</a> and is short enough to read in one sitting.</p>
 </details>
 
 <h2 id="source">Source and contributions</h2>
-<p>The tool is a single self-contained file with no dependencies. Bugs, layout changes on
-Facebook&rsquo;s side and pull requests are all welcome on
+<p><a href="https://github.com/roeibh">Roei</a> built and maintains the tool. It is a single
+self-contained file with no dependencies. Bugs, layout changes on Facebook&rsquo;s side and pull
+requests are welcome on
 <a href="https://github.com/roeibh/facebook-comment-explorer">GitHub</a> &mdash; and if it saved you
 an afternoon of clicking, a star helps other people find it.</p>
 
@@ -362,10 +375,13 @@ an afternoon of clicking, a star helps other people find it.</p>
       "@type": "SoftwareApplication",
       "name": "Facebook Comment Explorer",
       "applicationCategory": "BrowserApplication",
-      "operatingSystem": "Any desktop browser",
+      "operatingSystem": "Desktop Chrome",
+      "softwareRequirements": "A desktop browser with bookmarklet support",
       "description": "A bookmarklet that expands every comment and reply on a Facebook post, then provides search, thread filtering and CSV/JSON export.",
       "url": "https://roeibh.github.io/facebook-comment-explorer/",
       "downloadUrl": "https://github.com/roeibh/facebook-comment-explorer",
+      "image": "https://roeibh.github.io/facebook-comment-explorer/og.png",
+      "sameAs": "https://github.com/roeibh/facebook-comment-explorer",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -374,6 +390,11 @@ an afternoon of clicking, a star helps other people find it.</p>
     {
       "@type": "FAQPage",
       "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Facebook Comment Explorer?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Facebook Comment Explorer is a free, open-source bookmarklet that loads the comments and replies on a Facebook post into a searchable panel. It can filter whole threads, jump back to a comment on the post, and export the current results as CSV or JSON." }
+        },
         {
           "@type": "Question",
           "name": "Why can't I just use Ctrl+F on a Facebook post?",
@@ -407,7 +428,7 @@ an afternoon of clicking, a star helps other people find it.</p>
         {
           "@type": "Question",
           "name": "Which browsers does it work in?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Desktop Chrome, Edge, Brave, Arc, Opera and other Chromium browsers, plus Firefox and Safari. Mobile browsers are not supported because there is no practical way to run a bookmarklet on facebook.com on iOS or Android." }
+          "acceptedAnswer": { "@type": "Answer", "text": "It has been tested in desktop Chrome. Other desktop Chromium browsers should work; Firefox and Safari remain unverified. Mobile browsers are unsupported because running a bookmarklet on facebook.com is impractical on iOS and Android." }
         }
       ]
     }
